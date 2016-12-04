@@ -14,7 +14,9 @@ class MainActivityPresenter(val view: MainActivityView) : IMainActivityPresenter
 
     override fun onStart() {
         view.runWithPermissions(Manifest.permission.READ_EXTERNAL_STORAGE) {
-            Log.i("Presenter", musicFilesManager.getSongs().toString())
+            musicFilesManager.getSongs().forEach {
+                Log.i("Presenter", it.toString())
+            }
         }
     }
 

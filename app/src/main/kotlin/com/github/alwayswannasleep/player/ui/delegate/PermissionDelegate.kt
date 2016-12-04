@@ -6,12 +6,13 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.PermissionChecker
 import android.util.SparseArray
 import java.lang.ref.WeakReference
 import java.util.*
 
 
-class PermissionDelegate(val activity: Activity = Activity()) {
+class PermissionDelegate(activity: Activity = Activity()) {
 
     private val PERMISSIONS_REQUEST_CODE = 101
     private val KEY_NOT_SPECIFIED = -1
@@ -68,9 +69,7 @@ class PermissionDelegate(val activity: Activity = Activity()) {
             return
         }
 
-        grantResults
-                .filter { it != PackageManager.PERMISSION_GRANTED }
-                .forEach { return }
+        grantResults.forEach { if (it != PermissionChecker.PERMISSION_GRANTED) return }
 
         val key = tryGetKey(permissions)
 

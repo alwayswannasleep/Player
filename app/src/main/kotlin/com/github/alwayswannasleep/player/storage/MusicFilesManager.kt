@@ -3,7 +3,7 @@ package com.github.alwayswannasleep.player.storage
 import android.content.ContentResolver
 import android.content.Context
 import android.provider.MediaStore
-import java.util.*
+import com.github.alwayswannasleep.player.model.Song
 
 class MusicFilesManager constructor(context: Context) {
 
@@ -15,11 +15,13 @@ class MusicFilesManager constructor(context: Context) {
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
+            MediaStore.Audio.Media.COMPOSER,
             MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.DATA,
             MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.SIZE,
+            MediaStore.Audio.Media.BOOKMARK,
             MediaStore.Audio.Media.DATE_ADDED,
             MediaStore.Audio.Media.YEAR
     )
@@ -32,9 +34,7 @@ class MusicFilesManager constructor(context: Context) {
         contentResolver = context.contentResolver
     }
 
-    fun getSongs(): List<String> {
-        val result = ArrayList<String>()
-
+    fun getSongs(): List<Song> {
         val query = contentResolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 PROJECTION,
@@ -43,26 +43,6 @@ class MusicFilesManager constructor(context: Context) {
                 SORT_ORDER
         )
 
-        if (!query.moveToFirst()) {
-            query.close()
-            return result
-        }
-
-        do {
-            result.add(
-                    StringBuilder()
-                            .append(query.getString(0))
-                            .append(query.getString(1))
-                            .append(query.getString(2))
-                            .append(query.getString(3))
-                            .append(query.getString(4))
-                            .append(query.getString(5))
-                            .toString()
-            )
-        } while (query.moveToNext())
-
-        query.close()
-
-        return result
+        return query.mapSongs()
     }
 }
